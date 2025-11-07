@@ -1,5 +1,5 @@
 {
-  "name": "handle-chat-sdk",
+  "name": "@koralabs/handle-chat-sdk",
   "version": "0.0.1",
   "description": "SDK for handling chat functionalities",
   "main": "index.js",
