@@ -1,4 +1,5 @@
 import { MessageType, SessionCipher, SignalProtocolAddress } from "@privacyresearch/libsignal-protocol-typescript";
+
 import { ChatMessage, ChatUser, ProcessedChatMessage } from "../interfaces/Chat.js";
 import { SignalProtocolStore } from "./SignalProtocolStore.js";
 

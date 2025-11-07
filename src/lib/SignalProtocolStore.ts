@@ -80,7 +80,7 @@ export class SignalProtocolStore implements StorageType {
     isTrustedIdentity(
         identifier: string,
         identityKey: ArrayBuffer,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         _direction: Direction
     ): Promise<boolean> {
         if (identifier === null || identifier === undefined) {

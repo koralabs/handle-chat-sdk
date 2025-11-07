@@ -1,4 +1,5 @@
 import { MessageType } from "@privacyresearch/libsignal-protocol-typescript";
+
 import { SerializableFullDirectoryEntry } from "./Directory.js";
 import { SerializedStoreEntry } from "./Store.js";
 

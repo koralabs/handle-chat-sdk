@@ -4,13 +4,14 @@ import {
     PreKeyType,
     SignedPublicPreKeyType
 } from "@privacyresearch/libsignal-protocol-typescript";
+
 import {
     FullDirectoryEntry,
     SerializableFullDirectoryEntry,
 } from "../interfaces/Directory.js";
 import { SerializedStoreEntry, StoreEntry } from "../interfaces/Store.js";
-import { SignalProtocolStore } from "./SignalProtocolStore.js";
 import { arrayBufferToBase64, base64ToArrayBuffer } from "./helper.js";
+import { SignalProtocolStore } from "./SignalProtocolStore.js";
 
 export class SignalDirectory {
   private _data: { [address: string]: FullDirectoryEntry } = {};
