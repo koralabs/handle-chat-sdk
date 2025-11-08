@@ -1,6 +1,6 @@
 {
   "name": "@koralabs/handle-chat-sdk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "SDK for handling chat functionalities",
   "main": "index.js",
   "type": "module",
@@ -10,7 +10,7 @@
     "test": "node --import tsx --test src/**/*.test.ts"
   },
   "dependencies": {
-    "@privacyresearch/libsignal-protocol-typescript": "^0.0.16",
+    "@privacyresearch/libsignal-protocol-typescript": "^0.0.15",
     "@signalapp/libsignal-client": "^0.55.0",
     "tsx": "^4.20.6",
     "uuid": "^9.0.0"
