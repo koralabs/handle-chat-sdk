@@ -55,7 +55,7 @@ const buildMessage = async ({ encryptedMessage, decryptedMessage, recipientAddre
         if (sessionInit) msg.session_init = true;
 
         const processedMsg: ProcessedChatMessage = { id, to, from, timestamp, messageText: decryptedMessage };
-        return processedMsg;
+        return { msg, processedMsg };
     };
 
 export const encryptAndBuildMessage = async ({ message, senderUser, senderStore, recipientUser, sessionInit }: { message: string | ArrayBuffer, senderUser: ChatUser, senderStore: SignalProtocolStore, recipientUser: ChatUser, sessionInit?: boolean }) => {
