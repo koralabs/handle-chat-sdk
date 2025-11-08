@@ -45,24 +45,27 @@ export const readMessage = async (msg: ChatMessage, cipher: SessionCipher) => {
     }
 };
 
-
-const buildMessage = async ({ encryptedMessage, decryptedMessage, recipientAddress, senderAddress }: { encryptedMessage: MessageType; decryptedMessage: string;recipientAddress: string; senderAddress: string; }) => {
+const buildMessage = async ({ encryptedMessage, decryptedMessage, recipientAddress, senderAddress, sessionInit }: { encryptedMessage: MessageType; decryptedMessage: string;recipientAddress: string; senderAddress: string; sessionInit?: boolean }) => {
         const timestamp = Date.now();
         const id = Math.floor(Math.random() * 1e9);
         const to = recipientAddress;
         const from = senderAddress;
+        
         const msg: ChatMessage = { to, from, message: encryptedMessage, timestamp, delivered: false, id };
+        if (sessionInit) msg.session_init = true;
 
         const processedMsg: ProcessedChatMessage = { id, to, from, timestamp, messageText: decryptedMessage };
-        return { msg, processedMsg };
+        return processedMsg;
     };
 
-export const encryptAndBuildMessage = async (message: string | ArrayBuffer, senderUser: ChatUser, senderStore: SignalProtocolStore, recipientProtocolAddress: SignalProtocolAddress) => {
+export const encryptAndBuildMessage = async ({ message, senderUser, senderStore, recipientUser, sessionInit }: { message: string | ArrayBuffer, senderUser: ChatUser, senderStore: SignalProtocolStore, recipientUser: ChatUser, sessionInit?: boolean }) => {
+    const recipientProtocolAddress = new SignalProtocolAddress(recipientUser.address, recipientUser.deviceId!);
+    
     const cipher = new SessionCipher(senderStore, recipientProtocolAddress);
 
     const ciphertext = await cipher.encrypt(
         typeof message === "string" ? new TextEncoder().encode(message).buffer : message
     );
-    const processedMessage = await buildMessage({ encryptedMessage: ciphertext, decryptedMessage: typeof message === "string" ? message : new TextDecoder().decode(new Uint8Array(message)), recipientAddress: recipientProtocolAddress.name, senderAddress: senderUser.address });
+    const processedMessage = await buildMessage({ encryptedMessage: ciphertext, decryptedMessage: typeof message === "string" ? message : new TextDecoder().decode(new Uint8Array(message)), recipientAddress: recipientProtocolAddress.name, senderAddress: senderUser.address, sessionInit });
     return processedMessage;
 }
