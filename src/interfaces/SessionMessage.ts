@@ -10,5 +10,5 @@ export interface SessionMessage {
     senderName: string;
     senderImage: string;
     type: 'session_request' | 'session_response';
-    timestamp: string;
+    timestamp: number;
 }

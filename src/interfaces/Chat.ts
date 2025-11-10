@@ -7,6 +7,7 @@ export interface ChatUser {
   address: string;
   name: string;
   accepted: boolean;
+  active: boolean;
   chats: ProcessedChatMessage[];
   waitingForSession?: boolean;
   hasPendingChats?: boolean;
