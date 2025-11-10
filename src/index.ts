@@ -6,4 +6,3 @@ export * from './lib/helper.js';
 export * from './lib/message-helper.js';
 export * from './lib/SignalDirectory.js';
 export * from './lib/SignalProtocolStore.js';
-
