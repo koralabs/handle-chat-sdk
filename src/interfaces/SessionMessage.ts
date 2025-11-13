@@ -1,6 +1,8 @@
 import { SerializableFullDirectoryEntry } from "./Directory.js";
 import { SerializedStoreEntry } from "./Store.js";
 
+export type SessionMessageType = 'session_create' | 'session_accept' | 'session_deny';
+
 export interface SessionMessage {
     recipientAddress: string;
     senderAddress: string;
@@ -9,6 +11,6 @@ export interface SessionMessage {
     senderStore: SerializedStoreEntry;
     senderName: string;
     senderImage: string;
-    type: 'session_request' | 'session_response';
+    type: SessionMessageType;
     timestamp: number;
 }
