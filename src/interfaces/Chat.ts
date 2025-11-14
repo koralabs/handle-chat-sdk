@@ -23,6 +23,7 @@ export interface ProcessedChatMessage {
   from: string;
   messageText: string;
   timestamp: number;
+  failed?: boolean;
 }
 
 export interface ChatMessage {

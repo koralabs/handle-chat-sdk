@@ -13,5 +13,5 @@ export interface SessionMessage {
     senderImage: string;
     type: SessionMessageType;
     timestamp: number;
-    failedMessageId?: string;
+    failedMessageId?: number;
 }
