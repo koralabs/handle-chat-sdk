@@ -352,7 +352,7 @@ Convert protocol stores to/from serializable format.
 
 ## Requirements
 
-- Node.js 16+
+- Node.js 18+
 - TypeScript 4.5+
 
 ## Dependencies
