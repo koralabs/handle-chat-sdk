@@ -167,10 +167,10 @@ export class SignalProtocolStore implements StorageType {
         return this.put('25519KeypreKey' + keyId, keyPair)
     }
     async storeRegistrationId(registrationId: number): Promise<void> {
-        return this.put('registrationID', registrationId)
+        return this.put('registrationId', registrationId)
     }
-    async deleteRegistrationId(registrationId: number): Promise<void> {
-        return this.remove('registrationID' + registrationId)
+    async deleteRegistrationId(_registrationId: number): Promise<void> {
+        return this.remove('registrationId')
     }
     async storeIdentityKey(keyPair: KeyPairType): Promise<void> {
         return this.put('identityKey', keyPair)

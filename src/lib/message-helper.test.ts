@@ -8,9 +8,9 @@ import {
 } from '@privacyresearch/libsignal-protocol-typescript';
 
 import type { ChatMessage, ChatUser } from '../interfaces/Chat.js';
+import { encryptAndBuildMessage, readMessage } from './message-helper.js';
 import { createID, SignalDirectory } from './SignalDirectory.js';
 import { SignalProtocolStore } from './SignalProtocolStore.js';
-import { encryptAndBuildMessage, readMessage } from './message-helper.js';
 
 const textBuffer = (value: string) => new TextEncoder().encode(value).buffer;
 

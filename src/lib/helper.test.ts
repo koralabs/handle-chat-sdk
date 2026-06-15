@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { arrayBufferToBase64, base64ToArrayBuffer } from './helper.js';
 import {
+  createID,
+  createStoreBundle,
   deserializeBundle,
   deserializeStore,
+  populateStore,
   serializeBundle,
   serializeStore,
   SignalDirectory,
@@ -15,7 +19,6 @@ import {
   isSignedPreKeyType,
   SignalProtocolStore,
 } from './SignalProtocolStore.js';
-import { arrayBufferToBase64, base64ToArrayBuffer } from './helper.js';
 
 const buffer = (...bytes: number[]) => new Uint8Array(bytes).buffer;
 const bytes = (value: ArrayBuffer) => Array.from(new Uint8Array(value));
@@ -97,6 +100,25 @@ describe('SignalDirectory', () => {
     assert.deepEqual(bytes(deserialized.identityKey), [1, 2, 3]);
     assert.equal(deserialized.preKey?.keyId, 2);
   });
+
+  it('creates an identity by registering a bundle and populating the store', async () => {
+    const directory = new SignalDirectory();
+    const store = new SignalProtocolStore();
+
+    const { bundle, storeEntry } = await createID(directory, 'carol', store);
+    const expectedPreKeyId = bundle.oneTimePreKeys[0]?.keyId;
+    const preKeyBundle = directory.getPreKeyBundle('carol');
+
+    assert.equal(await store.getLocalRegistrationId(), storeEntry.registrationId);
+    assert.deepEqual(await store.getIdentityKeyPair(), storeEntry.identityKey);
+    assert.deepEqual(await store.loadPreKey(storeEntry.preKey.keyId), storeEntry.preKey.keyPair);
+    assert.deepEqual(await store.loadSignedPreKey(storeEntry.signedPreKey.keyId), storeEntry.signedPreKey.keyPair);
+    assert.ok(preKeyBundle);
+    assert.equal(preKeyBundle.registrationId, bundle.registrationId);
+    assert.deepEqual(preKeyBundle.identityKey, bundle.identityPubKey);
+    assert.equal(preKeyBundle.signedPreKey.keyId, bundle.signedPreKey.keyId);
+    assert.equal(preKeyBundle.preKey?.keyId, expectedPreKeyId);
+  });
 });
 
 describe('SignalProtocolStore', () => {
@@ -128,6 +150,16 @@ describe('SignalProtocolStore', () => {
     assert.equal(await store.loadPreKey(11), undefined);
     assert.equal(await store.loadSignedPreKey('12'), undefined);
     assert.equal(await store.loadSession('alice.1'), undefined);
+  });
+
+  it('stores and deletes the local registration id', async () => {
+    const store = new SignalProtocolStore();
+
+    assert.equal(await store.getLocalRegistrationId(), undefined);
+    await store.storeRegistrationId(1234);
+    assert.equal(await store.getLocalRegistrationId(), 1234);
+    await store.deleteRegistrationId(1234);
+    assert.equal(await store.getLocalRegistrationId(), undefined);
   });
 
   it('tracks identity trust and whether an identity changed', async () => {
@@ -216,5 +248,21 @@ describe('store serialization helpers', () => {
     assert.equal(deserialized.registrationId, entry.registrationId);
     assert.deepEqual(bytes(deserialized.signedPreKey.signature), [9]);
     assert.deepEqual(bytes(deserialized.preKey.keyPair.pubKey), [4]);
+  });
+
+  it('creates a store bundle and populates a private store', async () => {
+    const { bundle, storeEntry } = await createStoreBundle();
+    const store = new SignalProtocolStore();
+
+    populateStore(store, storeEntry);
+
+    assert.equal(await store.getLocalRegistrationId(), storeEntry.registrationId);
+    assert.deepEqual(await store.getIdentityKeyPair(), storeEntry.identityKey);
+    assert.deepEqual(await store.loadPreKey(storeEntry.preKey.keyId), storeEntry.preKey.keyPair);
+    assert.deepEqual(await store.loadSignedPreKey(storeEntry.signedPreKey.keyId), storeEntry.signedPreKey.keyPair);
+    assert.equal(bundle.registrationId, storeEntry.registrationId);
+    assert.deepEqual(bundle.identityPubKey, storeEntry.identityKey.pubKey);
+    assert.equal(bundle.signedPreKey.keyId, storeEntry.signedPreKey.keyId);
+    assert.equal(bundle.oneTimePreKeys[0]?.keyId, storeEntry.preKey.keyId);
   });
 });
