@@ -1,28 +1,45 @@
 {
   "name": "@koralabs/handle-chat-sdk",
-  "version": "0.0.14",
-  "description": "SDK for handling chat functionalities",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Programmatic client for handle-to-handle E2E chat (chat.handle.me): wallet-rooted identities (sign-to-derive), libsignal WASM sessions, transports, invite links, and the SSR guardian payloads.",
   "type": "module",
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/src/index.d.ts",
+      "default": "./lib/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "assets",
+    "examples",
+    "README.md"
+  ],
   "scripts": {
-    "build": "rm -rf lib/ && tsc",
-    "lint": "npx eslint './src/**/*.{ts,mjs}' --max-warnings=0",
-    "test": "node --import tsx --test src/**/*.test.ts"
+    "build": "node scripts/build.mjs",
+    "test": "npm run build && node --test \"test/**/*.test.mjs\"",
+    "examples": "node examples/quickstart.mjs && node examples/guardian-flow.mjs",
+    "prepack": "npm run build"
   },
   "dependencies": {
-    "@privacyresearch/libsignal-protocol-typescript": "^0.0.16",
-    "@signalapp/libsignal-client": "^0.94.3",
-    "tsx": "^4.22.4",
-    "uuid": "^14.0.0"
+    "@chainsafe/libp2p-noise": "^17.0.0",
+    "@chainsafe/libp2p-yamux": "^8.0.1",
+    "@libp2p/circuit-relay-v2": "^4.2.7",
+    "@libp2p/identify": "^4.1.8",
+    "@libp2p/interface": "^3.2.4",
+    "@libp2p/webrtc": "^6.0.25",
+    "@libp2p/websockets": "^10.1.15",
+    "@multiformats/multiaddr": "^13.0.3",
+    "libp2p": "^3.3.4",
+    "qrcode-generator": "^1.5.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
-    "@types/node": "^24.12.4",
-    "@types/uuid": "^10.0.0",
-    "eslint": "^9.39.4",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
-    "globals": "^16.5.0",
-    "typescript-eslint": "^8.60.0"
+    "@types/node": "^22.10.0",
+    "@types/qrcode-generator": "^0.0.16",
+    "typescript": "^5.7.2"
   },
   "keywords": [
     "messaging",
@@ -30,8 +47,9 @@
     "handles",
     "chat",
     "sdk",
-    "crypto"
+    "libsignal",
+    "cardano"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "AGPL-3.0-only"
 }
