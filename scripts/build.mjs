@@ -4,22 +4,125 @@
 // libsignal WASM artifact is staged into assets/. Relative imports in the emitted .js are given
 // explicit .js extensions so the package loads under plain Node ESM as well as bundlers.
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const chat = path.resolve(root, '..', 'chat.handle.me');
-const wasmPkg = path.join(chat, 'libsignal-wasm', 'pkg');
-const wasmBin = path.join(wasmPkg, 'handle_libsignal_wasm_bg.wasm');
+const chatCheckout = path.resolve(root, '..', 'chat.handle.me');
+const chatArchivePaths = ['src/chat', 'src/signal', 'libsignal-wasm'];
+const requiredChatPaths = [
+  path.join('src', 'chat'),
+  path.join('src', 'signal'),
+  path.join('libsignal-wasm', 'build.sh')
+];
+const wasmRel = path.join('libsignal-wasm', 'pkg', 'handle_libsignal_wasm_bg.wasm');
+const toolPath = [path.join(homedir(), '.local', 'bin'), path.join(homedir(), '.cargo', 'bin'), process.env.PATH]
+  .filter(Boolean)
+  .join(path.delimiter);
+let tempChat = null;
+let chat = chatCheckout;
 
-if (!existsSync(chat)) {
-  console.error(`chat.handle.me not found at ${chat} — the SDK builds from that repo's source.`);
-  process.exit(1);
+function cleanupTempChat() {
+  if (tempChat) {
+    rmSync(tempChat, { recursive: true, force: true });
+    tempChat = null;
+  }
+}
+process.on('exit', cleanupTempChat);
+
+function fail(message, status = 1) {
+  console.error(message);
+  cleanupTempChat();
+  process.exit(status);
+}
+
+function hasRequiredChatSource(dir) {
+  return requiredChatPaths.every((name) => existsSync(path.join(dir, name)));
+}
+
+function run(cmd, args, opts = {}) {
+  const result = spawnSync(cmd, args, {
+    stdio: 'inherit',
+    ...opts,
+    env: { ...process.env, PATH: toolPath, ...opts.env }
+  });
+  if (result.error) fail(`${cmd} ${args.join(' ')} failed: ${result.error.message}`);
+  if (result.status !== 0) fail(`${cmd} ${args.join(' ')} failed`, result.status ?? 1);
+  return result;
+}
+
+function copyChatSourceToTemp(sourceDir, reason) {
+  tempChat = mkdtempSync(path.join(tmpdir(), 'handle-chat-sdk-chat-'));
+  for (const rel of chatArchivePaths) {
+    const from = path.join(sourceDir, ...rel.split('/'));
+    const to = path.join(tempChat, ...rel.split('/'));
+    mkdirSync(path.dirname(to), { recursive: true });
+    cpSync(from, to, { recursive: true });
+  }
+  if (!hasRequiredChatSource(tempChat)) {
+    fail('temporary chat.handle.me source is missing src/chat, src/signal, or libsignal-wasm/build.sh.');
+  }
+  console.log(`using temporary chat.handle.me source because ${reason}`);
+  return tempChat;
+}
+
+function materializeOriginHead() {
+  const originHead = spawnSync('git', ['-C', chatCheckout, 'rev-parse', '--verify', 'origin/HEAD'], {
+    encoding: 'utf8'
+  });
+  if (originHead.status !== 0) {
+    fail(
+      `chat.handle.me checkout at ${chatCheckout} is missing src/chat, src/signal, or libsignal-wasm/build.sh, ` +
+        'and origin/HEAD is not available. Fetch the sibling repo default branch and retry.'
+    );
+  }
+
+  tempChat = mkdtempSync(path.join(tmpdir(), 'handle-chat-sdk-chat-'));
+  const archive = spawnSync(
+    'git',
+    ['-C', chatCheckout, 'archive', '--format=tar', 'origin/HEAD', ...chatArchivePaths],
+    { cwd: root, encoding: null, maxBuffer: 1024 * 1024 * 1024 }
+  );
+  if (archive.error) fail(`git archive origin/HEAD failed: ${archive.error.message}`);
+  if (archive.status !== 0) {
+    const stderr = archive.stderr ? archive.stderr.toString('utf8').trim() : '';
+    fail(`git archive origin/HEAD failed${stderr ? `: ${stderr}` : ''}`, archive.status ?? 1);
+  }
+
+  const extract = spawnSync('tar', ['-xf', '-', '-C', tempChat], {
+    input: archive.stdout,
+    stdio: ['pipe', 'inherit', 'inherit']
+  });
+  if (extract.error) fail(`tar extract failed: ${extract.error.message}`);
+  if (extract.status !== 0) fail('tar extract failed', extract.status ?? 1);
+  if (!hasRequiredChatSource(tempChat)) {
+    fail('chat.handle.me origin/HEAD is missing src/chat, src/signal, or libsignal-wasm/build.sh.');
+  }
+  console.log(`using chat.handle.me origin/HEAD snapshot because ${chatCheckout} lacks build source`);
+  return tempChat;
+}
+
+function resolveUsableChatSource() {
+  if (!existsSync(chatCheckout)) {
+    fail(`chat.handle.me not found at ${chatCheckout} — the SDK builds from that repo's source.`);
+  }
+  if (!hasRequiredChatSource(chatCheckout)) return materializeOriginHead();
+  if (existsSync(path.join(chatCheckout, wasmRel))) return chatCheckout;
+  return copyChatSourceToTemp(chatCheckout, `${chatCheckout} has source but no built libsignal WASM`);
+}
+
+chat = resolveUsableChatSource();
+const wasmPkg = path.join(chat, 'libsignal-wasm', 'pkg');
+const wasmBin = path.join(chat, wasmRel);
+
+if (!existsSync(wasmBin)) {
+  console.log('libsignal WASM not built — building from source (libsignal-wasm/build.sh)...');
+  run('bash', ['build.sh'], { cwd: path.join(chat, 'libsignal-wasm') });
 }
 if (!existsSync(wasmBin)) {
-  console.error(`libsignal WASM not built (${wasmBin}) — run: (cd ${chat} && node build.mjs)`);
-  process.exit(1);
+  fail(`libsignal WASM still missing after build (${wasmBin}).`);
 }
 
 const buildSrc = path.join(root, 'build-src');
@@ -58,11 +161,9 @@ for (const f of ['handle_libsignal_wasm.js', 'handle_libsignal_wasm.d.ts']) {
   copyFileSync(path.join(wasmPkg, f), path.join(pkgDir, f));
 }
 
-const tsc = spawnSync(process.execPath, [path.join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', 'tsconfig.build.json'], {
-  cwd: root,
-  stdio: 'inherit'
+run(process.execPath, [path.join(root, 'node_modules', 'typescript', 'bin', 'tsc'), '-p', 'tsconfig.build.json'], {
+  cwd: root
 });
-if (tsc.status !== 0) process.exit(tsc.status ?? 1);
 
 // Ship the glue alongside the compiled output (tsc types it but does not emit .js it didn't compile).
 const libPkgDir = path.join(lib, 'libsignal-wasm', 'pkg');
@@ -90,5 +191,6 @@ rewrite(lib);
 
 mkdirSync(assets, { recursive: true });
 copyFileSync(wasmBin, path.join(assets, 'libsignal_bg.wasm'));
+cleanupTempChat();
 
 console.log(`built lib/ from ${staged} staged sources (+ libsignal WASM asset)`);
