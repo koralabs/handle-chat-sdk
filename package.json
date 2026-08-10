@@ -1,6 +1,6 @@
 {
   "name": "@koralabs/handle-chat-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Programmatic client for handle-to-handle E2E chat (chat.handle.me): wallet-rooted identities (sign-to-derive), libsignal WASM sessions, transports, invite links, and the SSR guardian payloads.",
   "type": "module",
   "main": "lib/src/index.js",
@@ -30,7 +30,7 @@
     "@libp2p/circuit-relay-v2": "^4.2.7",
     "@libp2p/identify": "^4.1.8",
     "@libp2p/interface": "^3.2.4",
-    "@libp2p/webrtc": "^6.0.25",
+    "@libp2p/webrtc": "^6.0.29",
     "@libp2p/websockets": "^10.1.15",
     "@multiformats/multiaddr": "^13.0.3",
     "libp2p": "^3.3.4",
@@ -51,5 +51,8 @@
     "cardano"
   ],
   "author": "",
-  "license": "AGPL-3.0-only"
+  "license": "AGPL-3.0-only",
+  "overrides": {
+    "image-size": "2.0.2"
+  }
 }
