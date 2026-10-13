@@ -7,7 +7,3 @@
 
 .enclave
 CANONICAL_CONTRACT.md
-
-# C1 guardian (key custody) flow
-sdk/index.ts
-sdk/memory.ts

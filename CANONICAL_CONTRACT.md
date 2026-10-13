@@ -25,8 +25,8 @@ K.O.R.A.'s `merge_pr` asks the operator before a change to it merges into `maste
 
 | # | Code |
 |---|---|
-| 1 | `sdk/index.ts` |
+| 1 | `sdk/index.ts` (whole SDK; not enclaved) |
 
 ## Refactor needed for enforcement
 
-- None found.
+- **Enclave is empty.** Narrowed in policy review (decision 2: no real enclave need → merges freely). Key handling lives inside the one-file SDK; enclaving it would gate every fix. Split key custody into its own module, then enclave that.
