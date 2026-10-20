@@ -14,5 +14,19 @@ jobs:
       with:
         node-version: 24
         cache: npm
+    - uses: actions/checkout@v4
+      with:
+        repository: koralabs/chat.handle.me
+        path: chat-source
+    - name: Stage the upstream client source beside the SDK
+      run: mv chat-source ../chat.handle.me
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+    - name: Install the upstream WASM build tool
+      run: cargo install wasm-pack --version 0.13.1 --locked
+    - uses: arduino/setup-protoc@v3
+      with:
+        version: '29.3'
     - run: npm ci
     - run: npm test
