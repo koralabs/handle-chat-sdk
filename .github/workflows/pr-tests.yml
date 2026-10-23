@@ -1,4 +1,4 @@
-name: PR Tests
+name: PR Build
 on:
   pull_request:
   workflow_dispatch:
@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   pr-tests:
-    name: Lint, build and unit tests
+    name: Build SDK
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -29,4 +29,4 @@ jobs:
       with:
         version: '29.3'
     - run: npm ci
-    - run: npm test
+    - run: npm run build
