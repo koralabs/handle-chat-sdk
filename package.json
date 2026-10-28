@@ -52,6 +52,9 @@
   ],
   "author": "",
   "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=22"
+  },
   "overrides": {
     "image-size": "2.0.2"
   }

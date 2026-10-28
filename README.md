@@ -16,6 +16,8 @@ compiles its client core (`src/chat`, `src/signal`, the libsignal WASM) into `li
 
 ## Working examples (run them)
 
+Building needs read access to the private `koralabs/chat.handle.me` checkout beside this one, Node 22+, and its pinned libsignal WASM toolchain. See [docs/local-verification.md](docs/local-verification.md) for the exact local build-and-test steps.
+
 ```bash
 npm install && npm run build
 node examples/quickstart.mjs      # two handles, one E2E round trip, zero infrastructure
