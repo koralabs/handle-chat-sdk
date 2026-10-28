@@ -23,6 +23,7 @@ const toolPath = [path.join(homedir(), '.local', 'bin'), path.join(homedir(), '.
   .join(path.delimiter);
 let tempChat = null;
 let chat = chatCheckout;
+let chatProvenance = 'unknown';
 
 function cleanupTempChat() {
   if (tempChat) {
@@ -100,8 +101,18 @@ function materializeOriginHead() {
   if (!hasRequiredChatSource(tempChat)) {
     fail('chat.handle.me origin/HEAD is missing src/chat, src/signal, or libsignal-wasm/build.sh.');
   }
+  chatProvenance = `origin/HEAD ${originHead.stdout.trim()}`;
   console.log(`using chat.handle.me origin/HEAD snapshot because ${chatCheckout} lacks build source`);
   return tempChat;
+}
+
+// The commit the SDK was built from, so local verification evidence names its exact upstream input.
+function describeCheckout() {
+  const git = (args) => spawnSync('git', ['-C', chatCheckout, ...args], { encoding: 'utf8' });
+  const head = git(['rev-parse', 'HEAD']);
+  if (head.status !== 0) return 'unknown (not a git checkout)';
+  const dirty = git(['status', '--porcelain', '--', ...chatArchivePaths]).stdout.trim();
+  return `HEAD ${head.stdout.trim()}${dirty ? ' + uncommitted changes' : ''}`;
 }
 
 function resolveUsableChatSource() {
@@ -109,6 +120,7 @@ function resolveUsableChatSource() {
     fail(`chat.handle.me not found at ${chatCheckout} — the SDK builds from that repo's source.`);
   }
   if (!hasRequiredChatSource(chatCheckout)) return materializeOriginHead();
+  chatProvenance = describeCheckout();
   if (existsSync(path.join(chatCheckout, wasmRel))) return chatCheckout;
   return copyChatSourceToTemp(chatCheckout, `${chatCheckout} has source but no built libsignal WASM`);
 }
@@ -193,4 +205,4 @@ mkdirSync(assets, { recursive: true });
 copyFileSync(wasmBin, path.join(assets, 'libsignal_bg.wasm'));
 cleanupTempChat();
 
-console.log(`built lib/ from ${staged} staged sources (+ libsignal WASM asset)`);
+console.log(`built lib/ from ${staged} staged sources (+ libsignal WASM asset) — chat.handle.me ${chatProvenance}`);

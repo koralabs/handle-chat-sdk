@@ -1,5 +1,9 @@
 # @koralabs/handle-chat-sdk
 
+## Contributor test policy
+
+Tests and coverage run locally only, never in GitHub Actions, directly or through lifecycle scripts, composites, workflow templates, or shared helpers. Preserve local test commands. Build, lint, publication, deployment, and production guards remain permitted. Remove obsolete required test checks when retiring them.
+
 The programmatic client for **handle-to-handle end-to-end-encrypted chat** — the messaging layer
 behind [chat.handle.me](../chat.handle.me), consumable from any app or tool. v1 replaces the legacy
 0.0.x SDK (which used an outdated libsignal port) with the modern stack: the **latest official
@@ -11,6 +15,8 @@ Built **from chat.handle.me's source** — that repo is the single source of tru
 compiles its client core (`src/chat`, `src/signal`, the libsignal WASM) into `lib/` + `assets/`.
 
 ## Working examples (run them)
+
+Building needs read access to the private `koralabs/chat.handle.me` checkout beside this one, Node 22+, and its pinned libsignal WASM toolchain. See [docs/local-verification.md](docs/local-verification.md) for the exact local build-and-test steps.
 
 ```bash
 npm install && npm run build
