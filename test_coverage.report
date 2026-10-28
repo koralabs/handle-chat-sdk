@@ -1,0 +1,166 @@
+FORMAT_VERSION=1
+REPO=handle-chat-sdk
+TIMESTAMP_UTC=2026-10-28T15:45:23Z
+THRESHOLD_LINES=90
+THRESHOLD_BRANCHES=90
+TOTAL_LINES_PCT=56.82
+TOTAL_BRANCHES_PCT=78.04
+STATUS=fail
+SOURCE_PATHS=lib/src/**/*.js (built from sdk/ + chat.handle.me src/chat, src/signal)
+EXCLUDED_PATHS=lib/libsignal-wasm/**:wasm-bindgen-glue-for-the-rust-crate; test/**,examples/**:tests-and-examples
+LANGUAGE_SUMMARY=nodejs:lines=56.82,branches=78.04,tool=c8,status=fail
+
+=== RAW_OUTPUT_BUILD ===
+built lib/ from 23 staged sources (+ libsignal WASM asset) — chat.handle.me HEAD 1581dc4e8fde8e5b16129846bb5965b857db671e
+
+=== RAW_OUTPUT_C8_TESTS ===
+TAP version 13
+# Subtest: guardian helpers build and parse every guardian payload kind
+ok 1 - guardian helpers build and parse every guardian payload kind
+  ---
+  duration_ms: 1.203589
+  type: 'test'
+  ...
+# Subtest: guardian parser ignores non-guardian and non-object guardian payloads
+ok 2 - guardian parser ignores non-guardian and non-object guardian payloads
+  ---
+  duration_ms: 0.122173
+  type: 'test'
+  ...
+# Subtest: local storage directory stores bundles under handle-specific hex keys
+ok 3 - local storage directory stores bundles under handle-specific hex keys
+  ---
+  duration_ms: 0.257205
+  type: 'test'
+  ...
+# Subtest: broadcast channel transport delivers only to current subscriptions
+ok 4 - broadcast channel transport delivers only to current subscriptions
+  ---
+  duration_ms: 70.933183
+  type: 'test'
+  ...
+# Subtest: qr svg honors size and margin options
+ok 5 - qr svg honors size and margin options
+  ---
+  duration_ms: 22.521988
+  type: 'test'
+  ...
+# Subtest: wallet sign-to-derive preserves its payload and rejects unusable signatures
+ok 6 - wallet sign-to-derive preserves its payload and rejects unusable signatures
+  ---
+  duration_ms: 1.650708
+  type: 'test'
+  ...
+# Subtest: signal sessions preserve Unicode and empty text in both directions
+ok 7 - signal sessions preserve Unicode and empty text in both directions
+  ---
+  duration_ms: 21.101543
+  type: 'test'
+  ...
+# Subtest: sealed sender rejects invalid envelopes while preserving binary content
+ok 8 - sealed sender rejects invalid envelopes while preserving binary content
+  ---
+  duration_ms: 10.719963
+  type: 'test'
+  ...
+# Subtest: exported signal state resumes an existing conversation after a restart
+ok 9 - exported signal state resumes an existing conversation after a restart
+  ---
+  duration_ms: 8.21272
+  type: 'test'
+  ...
+# Subtest: routing labels match peer subscriptions across an epoch boundary
+ok 10 - routing labels match peer subscriptions across an epoch boundary
+  ---
+  duration_ms: 10.244586
+  type: 'test'
+  ...
+# Subtest: typed message helpers classify, preview, and round-trip content
+ok 11 - typed message helpers classify, preview, and round-trip content
+  ---
+  duration_ms: 1.321833
+  type: 'test'
+  ...
+# Subtest: invite helpers round-trip share URLs and reject malformed payloads
+ok 12 - invite helpers round-trip share URLs and reject malformed payloads
+  ---
+  duration_ms: 1.110515
+  type: 'test'
+  ...
+# Subtest: memory directory and hub route only active subscriptions
+ok 13 - memory directory and hub route only active subscriptions
+  ---
+  duration_ms: 0.368438
+  type: 'test'
+  ...
+# Subtest: the built package exposes the client surface
+ok 14 - the built package exposes the client surface
+  ---
+  duration_ms: 0.597912
+  type: 'test'
+  ...
+# Subtest: identity derivation matches the cross-repo vector (chat.handle.me + secrets.handle.me)
+ok 15 - identity derivation matches the cross-repo vector (chat.handle.me + secrets.handle.me)
+  ---
+  duration_ms: 4.850655
+  type: 'test'
+  ...
+# Subtest: guardian payloads round-trip the typed-message codec
+ok 16 - guardian payloads round-trip the typed-message codec
+  ---
+  duration_ms: 1.148899
+  type: 'test'
+  ...
+# Subtest: example quickstart.mjs runs end to end
+ok 17 - example quickstart.mjs runs end to end
+  ---
+  duration_ms: 87.831221
+  type: 'test'
+  ...
+# Subtest: example guardian-flow.mjs runs end to end
+ok 18 - example guardian-flow.mjs runs end to end
+  ---
+  duration_ms: 100.651058
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 266.798966
+--------------------|---------|----------|---------|---------|--------------------------------------
+File                | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                    
+--------------------|---------|----------|---------|---------|--------------------------------------
+All files           |   56.82 |    78.04 |   65.36 |   56.82 |                                      
+ src                |     100 |      100 |     100 |     100 |                                      
+  index.js          |     100 |      100 |     100 |     100 |                                      
+  memory.js         |     100 |      100 |     100 |     100 |                                      
+ src/chat           |   62.93 |    75.32 |   63.23 |   62.93 |                                      
+  ChatService.js    |   75.58 |    56.19 |   67.24 |   75.58 | ...0,576-578,582-583,622-627,632-633 
+  anchor.js         |       0 |        0 |       0 |       0 | 1-43                                 
+  blob.js           |   32.19 |      100 |   21.05 |   32.19 | ...3,115-118,120-125,128-134,136-145 
+  chainDirectory.js |       0 |        0 |       0 |       0 | 1-51                                 
+  directory.js      |     100 |      100 |     100 |     100 |                                      
+  guardian.js       |     100 |      100 |     100 |     100 |                                      
+  identity.js       |     100 |    92.85 |     100 |     100 | 23                                   
+  invite.js         |     100 |      100 |     100 |     100 |                                      
+  message.js        |   97.82 |    89.47 |     100 |   97.82 | 82,84                                
+  publish.js        |       0 |        0 |       0 |       0 | 1-22                                 
+  qr.js             |     100 |      100 |     100 |     100 |                                      
+  receipt.js        |     100 |    72.72 |     100 |     100 | 17,19-20                             
+  sessionStore.js   |    19.4 |      100 |       0 |    19.4 | ...57,61-63,66-69,72-73,75-82,85-134 
+  transport.js      |    48.1 |      100 |   57.14 |    48.1 | 29-32,43-79                          
+ src/chat/mesh      |     7.8 |    16.66 |       0 |     7.8 |                                      
+  b2b.js            |       0 |        0 |       0 |       0 | 1-59                                 
+  client.js         |       0 |        0 |       0 |       0 | 1-138                                
+  node.js           |       0 |        0 |       0 |       0 | 1-46                                 
+  presenceAuth.js   |   56.52 |      100 |       0 |   56.52 | 17-23,27-30,34-39,43-45              
+  protocol.js       |       0 |        0 |       0 |       0 | 1-8                                  
+  wire.js           |       0 |        0 |       0 |       0 | 1-36                                 
+ src/signal         |   98.34 |    96.66 |   95.45 |   98.34 |                                      
+  SignalEngine.js   |   98.34 |    96.66 |   95.45 |   98.34 | 108-109                              
+--------------------|---------|----------|---------|---------|--------------------------------------
