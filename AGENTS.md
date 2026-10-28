@@ -12,3 +12,4 @@ Fix client bugs UPSTREAM in chat.handle.me, then rebuild here. The examples are 
 contract (also pinned in chat.handle.me and secrets.handle.me) — never change it casually.
 The 0.0.x history (old `@privacyresearch` libsignal port) is superseded; do not resurrect it.
 License is AGPL-3.0-only (libsignal).
+- Canonical contract and enclave (DRAFT, not active until the operator adopts them at the repo root): [`CANONICAL_CONTRACT.md`](./docs/proposals/phase5-handle-chat-sdk/CANONICAL_CONTRACT.md) and [`.enclave`](./docs/proposals/phase5-handle-chat-sdk/.enclave).
