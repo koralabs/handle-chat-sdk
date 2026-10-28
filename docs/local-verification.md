@@ -33,7 +33,10 @@ git clone https://github.com/koralabs/chat.handle.me      # private; default bra
 cd handle-chat-sdk
 npm ci
 npm test            # = npm run build && node --test "test/**/*.test.mjs" (includes both examples)
+./test_coverage.sh  # builds, then c8 over the same tests; writes test_coverage.report
 ```
+
+`test_coverage.sh` measures the built package (`lib/src/**/*.js`, every file, including ones no test loads) against a 90% lines / 90% branches gate. On 2026-10-28 it measured 56.82% lines / 78.04% branches: `src/signal` 98%, `src/chat` 63%, `src/chat/mesh` 8%.
 
 If step 2 is skipped, `npm run build` builds the WASM itself in a temporary copy. That copy is deleted afterwards, so every build compiles it again.
 
