@@ -1,0 +1,18 @@
+# handle-chat-sdk enclave. Exact repo-root-relative paths; no wildcards, no directory prefixes.
+# A PR touching any of these that merges into master needs operator approval. Why each is here: CANONICAL_CONTRACT.md.
+# The SDK holds no crypto of its own; it republishes chat.handle.me's client core. What matters here is
+# what gets published to npm and that the cross-repo identity vector never changes.
+.enclave
+CANONICAL_CONTRACT.md
+
+# publishing: a push to master publishes the public npm package
+.github/workflows/deploy.yml
+package.json
+.npmrc
+
+# what is compiled and exported, and from where
+scripts/build.mjs
+sdk/index.ts
+
+# the cross-repo identity vector and the guardian codec contract
+test/sdk.test.mjs
